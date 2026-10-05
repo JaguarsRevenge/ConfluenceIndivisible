@@ -14,20 +14,23 @@ index.html                     the whole site (single page)
 css/styles.css                 all styles; brand tokens on :root
 images/logo.png                group logo (from the newsletter; low-res 260x246, replace if a better original turns up)
 images/votenote-edition-N.png  newsletter cover thumbnails
+images/2026-general-election-cheatsheet.png  cheatsheet thumbnail
+guides/2026-general-election-cheatsheet.pdf  Voter Cheatsheet (one-page key races guide)
 newsletters/votenote-edition-N.pdf  VoteNote issues (clickable PDFs, links inside work)
 ```
 
 ## Content structure (index.html, top to bottom)
 
-1. Header: logo and nav (Events, Take Action, VoteNote, Contact)
+1. Header: logo and nav (Cheatsheet, Events, Take Action, VoteNote, Contact)
 2. Hero: the **group** is the headline. VoteNote is only the newsletter; don't make it the main brand.
 3. Gradient band: one-line call to action
-4. `#events`: Upcoming Events (`.event` list items with a `.date` badge)
-5. `#act`: Micro Activism FOR THE WIN (`.tile` grid)
-6. `#records`: Know the Record, linking to the NoTo candidate sites
-7. `#resources`: Know Your Ballot (`.card` grid)
-8. `#votenote`: VoteNote newsletter archive (`.issue` items, newest first, with a "Latest" `.tag` on the newest)
-9. `#contact`: Get Involved (elections@confluenceindivisible.org)
+4. `#cheatsheet`: Voter Cheatsheet (one `.issue.cheatsheet-card` with thumbnail, the four voting steps, Read/Download buttons). Kept near the top on purpose.
+5. `#events`: Upcoming Events (`.event` list items with a `.date` badge)
+6. `#act`: Micro Activism FOR THE WIN (`.tile` grid)
+7. `#records`: Know the Record, linking to the NoTo candidate sites
+8. `#resources`: Know Your Ballot (`.card` grid)
+9. `#votenote`: VoteNote newsletter archive (`.issue` items, newest first, with a "Latest" `.tag` on the newest)
+10. `#contact`: Get Involved (elections@confluenceindivisible.org)
 
 Section backgrounds alternate white and `--mist` (the `.micro` and `.alt` classes).
 
