@@ -157,6 +157,12 @@
         </div>
         <div id="nMsg"></div>
       </div>
+      <div class="panel">
+        <h2>Past issues</h2>
+        <p class="hint">Remove an issue that was changed or posted by mistake. Then add the corrected PDF above using the same edition number.</p>
+        <div id="nList"></div>
+        <div id="nListMsg"></div>
+      </div>
     </div>
   </div>
 </main>
@@ -213,6 +219,7 @@ async function commitFiles(files, message) {
   const base = (await (await gh('/git/commits/'+head)).json()).tree.sha;
   const tree = [];
   for (const f of files) {
+    if (f.remove) { tree.push({path:f.path, mode:'100644', type:'blob', sha:null}); continue; }
     const body = f.text !== undefined ? {content:f.text, encoding:'utf-8'} : {content:f.base64, encoding:'base64'};
     const blob = await (await gh('/git/blobs', {method:'POST', body:JSON.stringify(body)})).json();
     tree.push({path:f.path, mode:'100644', type:'blob', sha:blob.sha});
@@ -237,7 +244,7 @@ async function loadConfig() {
 }
 function enterApp() {
   show('login', false); show('setup', false); show('app', true); show('logout', true);
-  loadEvents(); prepNews();
+  loadEvents(); prepNews(); loadIssues();
 }
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault(); msg('loginMsg', 'Checking...', 'info');
@@ -444,11 +451,43 @@ $('nPublish').onclick = async () => {
       {path:'share/votenote-'+p.n+'.html', text:shareHtml(p)},
       {path:'index.html', text:html}
     ], 'Admin: add VoteNote edition '+p.n);
-    show('nPrev', false); $('nForm').reset(); pending = null; prepNews(); loadEvents();
+    show('nPrev', false); $('nForm').reset(); pending = null; prepNews(); loadEvents(); loadIssues();
     msg('nMsg', 'Published! It will appear on the website in about a minute. Facebook share link: '+SITE+'/share/votenote-'+p.n+'.html', 'ok');
   } catch (err) { msg('nMsg', 'Could not publish: '+err.message, 'err'); }
   $('nPublish').disabled = false;
 };
+
+// ---------- remove a VoteNote issue ----------
+const ISSUE_RE = /[ \t]*<li class="issue">[\s\S]*?<\/li>\n?/g;
+async function loadIssues() {
+  try {
+    const html = await readText('index.html');
+    const items = (section(html, 'ISSUES').inner.match(ISSUE_RE) || []).map(c => ({
+      n:+(c.match(/votenote-edition-(\d+)\.pdf/) || [0, 0])[1], title:((c.match(/<h3>([^<]*)<\/h3>/) || [])[1] || '')}));
+    $('nList').innerHTML = items.length ? items.map(i => '<div class="evt"><div class="info"><h3>'+i.title+'</h3></div>'+
+      '<div class="btns"><button class="small danger" data-rm="'+i.n+'">Remove</button></div></div>').join('') : '<p class="hint">No issues yet.</p>';
+  } catch (err) { msg('nListMsg', 'Could not load issues: '+err.message, 'err'); }
+}
+$('nList').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-rm]'); if (!b) return;
+  const n = +b.dataset.rm;
+  if (!confirm('Remove VoteNote edition '+n+' from the website, including its PDF? This cannot be undone from here.')) return;
+  b.disabled = true; msg('nListMsg', 'Removing...', 'info');
+  try {
+    let html = await readText('index.html'); const s = section(html, 'ISSUES');
+    let chunks = (s.inner.match(ISSUE_RE) || []).filter(c => !c.includes('votenote-edition-'+n+'.pdf'));
+    if (chunks.length && !chunks[0].includes('class="tag">Latest')) chunks[0] = chunks[0].replace('<h3>', '<span class="tag">Latest</span>\n              <h3>');
+    html = html.slice(0, s.start) + '\n' + chunks.join('') + html.slice(s.end);
+    const top = chunks.length && chunks[0].match(/votenote-edition-(\d+)\.pdf/);
+    if (top) html = html.replace(/(property="og:image" content="[^"]*og-votenote-edition-)\d+(\.jpg")/, '$1'+top[1]+'$2');
+    const ref = await (await gh('/git/ref/heads/'+BRANCH)).json();
+    const existing = new Set((await (await gh('/git/trees/'+ref.object.sha+'?recursive=1')).json()).tree.map(t => t.path));
+    const gone = ['newsletters/votenote-edition-'+n+'.pdf', 'images/votenote-edition-'+n+'.png', 'images/og-votenote-edition-'+n+'.jpg', 'share/votenote-'+n+'.html']
+      .filter(p => existing.has(p)).map(path => ({path, remove:true}));
+    await commitFiles([...gone, {path:'index.html', text:html}], 'Admin: remove VoteNote edition '+n);
+    msg('nListMsg', 'Removed. The website will update in about a minute.', 'ok'); loadIssues(); prepNews();
+  } catch (err) { msg('nListMsg', 'Could not remove: '+err.message, 'err'); b.disabled = false; }
+});
 
 // ---------- start ----------
 (async () => {
