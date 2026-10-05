@@ -5,7 +5,7 @@ Static site for Confluence Indivisible, a group in the Greater Wenatchee Valley,
 - **Live:** https://confluenceindivisible.org/ (the old https://jaguarsrevenge.github.io/ConfluenceIndivisible/ address redirects here)
 - **Repo:** https://github.com/JaguarsRevenge/ConfluenceIndivisible
 - **Hosting:** GitHub Pages, deploy from branch `main`, folder `/ (root)`. Pushing to `main` publishes in about a minute. `.nojekyll` is present so files are served as-is.
-- **Custom domain:** `confluenceindivisible.org`, set by the `CNAME` file (same pattern as the NoTo sites). As of Oct 5, 2026, HTTP works but HTTPS fails with a certificate name mismatch while GitHub issues the certificate. Once it's issued, tick **Enforce HTTPS** in the repo's Settings > Pages. If it never issues, check the domain's DNS records.
+- **Custom domain:** `confluenceindivisible.org`, set by the `CNAME` file (same pattern as the NoTo sites). HTTPS is live with Enforce HTTPS on (certificate issued Oct 5, 2026 after removing and re-adding the domain in Settings > Pages; if it ever breaks, do the same). GitHub renews the certificate automatically. `www` redirects to the apex.
 - **Pushing:** git over HTTPS uses username `JaguarsRevenge` and a fine-grained personal access token (Contents: read and write on this repo) as the password. The GitHub account signs in with Google, which git can't use. The token is saved by `credential.helper store`. Prompts for a username and token can't be answered from inside Claude Code, so run the first push in a separate terminal tab.
 
 ## Files
@@ -28,7 +28,7 @@ share/votenote-N.html          per-issue share page: Open Graph tags for Faceboo
 1. Header: logo and nav (Cheatsheet, Events, Take Action, VoteNote, Contact)
 2. Hero: the **group** is the headline. VoteNote is only the newsletter; don't make it the main brand.
 3. Gradient band: one-line call to action
-4. `#cheatsheet`: Voter Cheatsheet (one `.issue.cheatsheet-card` with thumbnail, the four voting steps, Read/Download buttons). Kept near the top on purpose.
+4. `#cheatsheet`: Voter Cheatsheet (two `.issue.cheatsheet-card` cards: the Chelan & Douglas cheatsheet with the four voting steps and Read/Download buttons, then the statewide judges/initiatives/school bonds image). Kept near the top on purpose.
 5. `#events`: Upcoming Events (`.event` list items with a `.date` badge)
 6. `#act`: Micro Activism FOR THE WIN (`.tile` grid)
 7. `#records`: Know the Record, linking to the NoTo candidate sites
