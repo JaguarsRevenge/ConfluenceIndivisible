@@ -23,6 +23,10 @@ images/og-votenote-edition-N.jpg  1200x630 Facebook preview image for each issue
 share/votenote-N.html          per-issue share page: Open Graph tags for Facebook previews, then redirects to the PDF
 ```
 
+## Admin page (/admin/)
+
+`admin/index.html` is a hidden, unlinked, noindex page (the only JavaScript on the site) for adding/editing events and publishing VoteNote issues. It is not truly server-protected, since GitHub Pages is static: a shared password decrypts (AES-GCM, PBKDF2) a GitHub token stored in `admin/config.json`, and the page commits to `main` through the GitHub API. First-time setup/password change is in the page itself (needs a fine-grained token with Contents: read and write). Use a long passphrase; the encrypted token is public. It edits `index.html` only between the `<!-- EVENTS:START/END -->` and `<!-- ISSUES:START/END -->` markers, so keep those markers. Events carry `data-date="YYYY-MM-DD"`. Untested against the live GitHub API as of creation; test after first deploy.
+
 ## Content structure (index.html, top to bottom)
 
 1. Header: logo and nav (Cheatsheet, Events, Take Action, VoteNote, Contact)

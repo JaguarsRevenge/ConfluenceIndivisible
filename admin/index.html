@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Site Admin | Confluence Indivisible</title>
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root { --red:#c64a4d; --blue:#77a0bd; --navy:#34445d; --charcoal:#3f3d3a; --mist:#f4f5f8; --link:#07296f; --ok:#2f7d4f; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Montserrat,Arial,sans-serif; color:#1c1c1b; background:var(--mist); line-height:1.5; }
+    header { background:var(--navy); color:#fff; padding:14px 20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    header img { height:44px; }
+    header h1 { font-family:Oswald,sans-serif; font-size:1.4rem; margin:0; flex:1; letter-spacing:.02em; }
+    main { max-width:820px; margin:0 auto; padding:20px 16px 60px; }
+    .panel { background:#fff; border-radius:10px; padding:20px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+    h2 { font-family:Oswald,sans-serif; color:var(--navy); margin:0 0 6px; font-size:1.5rem; }
+    .hint { color:#555; font-size:.92rem; margin:0 0 14px; }
+    label { display:block; font-weight:600; margin:14px 0 4px; }
+    input[type=text], input[type=password], input[type=date], input[type=number], textarea {
+      width:100%; font:inherit; padding:10px 12px; border:2px solid #c9ced8; border-radius:8px; background:#fff; }
+    input:focus, textarea:focus { outline:none; border-color:var(--blue); }
+    textarea { min-height:90px; resize:vertical; }
+    .row { display:flex; gap:14px; flex-wrap:wrap; } .row > div { flex:1; min-width:200px; }
+    .check { display:flex; align-items:center; gap:8px; font-weight:400; } .check input { width:20px; height:20px; }
+    button, .btn { font:inherit; font-weight:700; border:0; border-radius:8px; padding:11px 20px; cursor:pointer; background:var(--red); color:#fff; }
+    button.secondary { background:#fff; color:var(--navy); border:2px solid var(--navy); }
+    button.small { padding:6px 12px; font-size:.88rem; }
+    button.danger { background:#fff; color:var(--red); border:2px solid var(--red); }
+    button:disabled { opacity:.5; cursor:default; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+    .tabs { display:flex; gap:8px; margin-bottom:16px; }
+    .tabs button { background:#fff; color:var(--navy); border:2px solid var(--navy); }
+    .tabs button.on { background:var(--navy); color:#fff; }
+    .evt { display:flex; gap:14px; align-items:flex-start; padding:12px 0; border-top:1px solid #e3e6ec; }
+    .evt:first-child { border-top:0; }
+    .badge { background:var(--red); color:#fff; border-radius:8px; text-align:center; min-width:56px; padding:6px 4px; font-family:Oswald,sans-serif; font-size:1.3rem; line-height:1.1; }
+    .badge span { display:block; font-size:.75rem; text-transform:uppercase; }
+    .evt.past .badge { background:#9aa1ae; } .evt.past { opacity:.7; }
+    .evt .info { flex:1; } .evt h3 { margin:0; font-size:1rem; } .evt p { margin:2px 0 0; font-size:.88rem; color:#555; }
+    .evt .btns { display:flex; gap:6px; flex-direction:column; }
+    .pill { display:inline-block; font-size:.72rem; background:#e3e6ec; border-radius:20px; padding:1px 8px; margin-left:6px; }
+    .msg { padding:12px 14px; border-radius:8px; margin-top:14px; font-weight:600; }
+    .msg.ok { background:#e4f3ea; color:var(--ok); } .msg.err { background:#fbe6e6; color:#a02b2e; } .msg.info { background:#e7eef5; color:var(--navy); }
+    .publishbar { position:sticky; bottom:0; background:var(--navy); color:#fff; padding:12px 16px; border-radius:10px; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-top:10px; }
+    .previews { display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; } .previews figure { margin:0; } .previews img { max-width:100%; border:1px solid #ccc; } .previews figcaption { font-size:.8rem; color:#555; }
+    a { color:var(--link); } [hidden] { display:none !important; }
+    .login { max-width:420px; margin:40px auto; }
+  </style>
+</head>
+<body>
+<header>
+  <img src="../images/logo.png" alt="">
+  <h1>Site Admin</h1>
+  <button class="secondary small" id="logout" hidden>Log out</button>
+</header>
+<main>
+
+  <!-- Login -->
+  <section class="panel login" id="login" hidden>
+    <h2>Log in</h2>
+    <p class="hint">Enter the admin password to edit the website.</p>
+    <form id="loginForm">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" autocomplete="current-password" required>
+      <div class="actions"><button type="submit">Log in</button></div>
+      <div id="loginMsg"></div>
+    </form>
+    <p class="hint" style="margin-top:22px"><a href="#" id="toSetup">First-time setup or change password</a></p>
+  </section>
+
+  <!-- Setup -->
+  <section class="panel login" id="setup" hidden>
+    <h2>Set the admin password</h2>
+    <p class="hint">One-time step. Paste the GitHub access token (it needs <b>Contents: read and write</b> on this repository) and choose the password everyone will use to log in. The token is stored scrambled; only the password unlocks it.</p>
+    <form id="setupForm">
+      <label for="tok">GitHub access token</label>
+      <input type="password" id="tok" autocomplete="off" required>
+      <label for="pw1">New password (at least 12 characters; several random words works well)</label>
+      <input type="password" id="pw1" autocomplete="new-password" minlength="12" required>
+      <label for="pw2">Type the password again</label>
+      <input type="password" id="pw2" autocomplete="new-password" minlength="12" required>
+      <div class="actions"><button type="submit">Save password</button><button type="button" class="secondary" id="setupBack" hidden>Back</button></div>
+      <div id="setupMsg"></div>
+    </form>
+  </section>
+
+  <!-- App -->
+  <div id="app" hidden>
+    <div class="tabs">
+      <button id="tabEvents" class="on">Events</button>
+      <button id="tabNews">Add VoteNote</button>
+    </div>
+
+    <!-- Events -->
+    <div id="viewEvents">
+      <div class="panel">
+        <h2>Upcoming events</h2>
+        <p class="hint">Events show on the website in date order. Grey ones have already happened.</p>
+        <div id="evList"></div>
+        <div class="actions">
+          <button id="evAdd">+ Add an event</button>
+          <button class="secondary" id="evClean">Remove past events</button>
+        </div>
+      </div>
+
+      <div class="panel" id="evFormPanel" hidden>
+        <h2 id="evFormTitle">Add an event</h2>
+        <form id="evForm">
+          <div class="row">
+            <div><label for="evDate">Date</label><input type="date" id="evDate" required></div>
+            <div><label for="evWhen">Time and place</label><input type="text" id="evWhen" placeholder="5:30 PM · Sunny Slope Church, Wenatchee"></div>
+          </div>
+          <label for="evTitle">Event name</label>
+          <input type="text" id="evTitle" required>
+          <label for="evDesc">Description</label>
+          <textarea id="evDesc"></textarea>
+          <div class="row">
+            <div><label for="evLink">Link (optional)</label><input type="text" id="evLink" placeholder="https://..."></div>
+            <div><label for="evLinkText">Link wording</label><input type="text" id="evLinkText" placeholder="Event details"></div>
+          </div>
+          <label class="check"><input type="checkbox" id="evHi"> Highlight this event (red outline, for big days like Election Day)</label>
+          <div class="actions"><button type="submit">Done</button><button type="button" class="secondary" id="evCancel">Cancel</button></div>
+        </form>
+      </div>
+
+      <div class="publishbar" id="evBar" hidden>
+        <span>You have changes that are not on the website yet.</span>
+        <button id="evPublish">Publish to website</button>
+      </div>
+      <div id="evMsg"></div>
+    </div>
+
+    <!-- VoteNote -->
+    <div id="viewNews" hidden>
+      <div class="panel">
+        <h2>Add a VoteNote issue</h2>
+        <p class="hint">Pick the PDF and fill in three things. The cover pictures and Facebook share page are made for you.</p>
+        <form id="nForm">
+          <label for="nFile">VoteNote PDF</label>
+          <input type="file" id="nFile" accept="application/pdf" required>
+          <div class="row">
+            <div><label for="nNum">Edition number</label><input type="number" id="nNum" min="1" required></div>
+            <div><label for="nDate">Issue date</label><input type="date" id="nDate" required></div>
+          </div>
+          <label for="nSum">One-line summary</label>
+          <input type="text" id="nSum" placeholder="Get Together at Sunny Slope Church, No Kings Early Voting..." required>
+          <div class="actions"><button type="submit" id="nGo">Preview</button></div>
+        </form>
+        <div id="nPrev" hidden>
+          <div class="previews"><figure><img id="nThumb" alt=""><figcaption>Cover on the website</figcaption></figure><figure><img id="nOg" alt=""><figcaption>Facebook preview</figcaption></figure></div>
+          <div class="actions"><button id="nPublish">Publish to website</button></div>
+        </div>
+        <div id="nMsg"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+const SITE = 'https://confluenceindivisible.org';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const todayStr = () => { const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const show = (id, on) => $(id).hidden = !on;
+function msg(id, text, kind) { $(id).innerHTML = text ? '<div class="msg '+kind+'">'+esc(text)+'</div>' : ''; }
+const niceDate = s => { const [y,m,d] = s.split('-').map(Number); return MONTHS[m-1]+' '+d+', '+y; };
+const ordinal = n => { const v = n % 100; return n + (['th','st','nd','rd'][(v-20)%10] || ['th','st','nd','rd'][v] || 'th'); };
+
+// ---------- crypto: the password unlocks the stored GitHub token ----------
+const enc = new TextEncoder(), dec = new TextDecoder();
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function deriveKey(password, salt, iter) {
+  const base = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:iter, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+async function encryptToken(token, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 600000;
+  const key = await deriveKey(password, salt, iter);
+  const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(token));
+  return {salt:b64(salt), iv:b64(iv), ct:b64(ct), iter};
+}
+async function decryptToken(cfg, password) {
+  const key = await deriveKey(password, unb64(cfg.salt), cfg.iter);
+  return dec.decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(cfg.iv)}, key, unb64(cfg.ct)));
+}
+
+// ---------- GitHub ----------
+let TOKEN = null, CFG = null;
+const BRANCH = 'main';
+async function gh(path, opts = {}) {
+  const r = await fetch('https://api.github.com/repos/'+CFG.owner+'/'+CFG.repo+path, {
+    cache:'no-store', ...opts,
+    headers:{Authorization:'Bearer '+TOKEN, Accept:'application/vnd.github+json', ...(opts.headers||{})}
+  });
+  if (!r.ok) throw new Error('GitHub said '+r.status+(r.status===401?' (the saved token no longer works; redo first-time setup)':''));
+  return r;
+}
+async function readText(path) {
+  return (await gh('/contents/'+path+'?ref='+BRANCH, {headers:{Accept:'application/vnd.github.raw+json'}})).text();
+}
+// files: [{path, text} | {path, base64}] committed together in one step
+async function commitFiles(files, message) {
+  const ref = await (await gh('/git/ref/heads/'+BRANCH)).json();
+  const head = ref.object.sha;
+  const base = (await (await gh('/git/commits/'+head)).json()).tree.sha;
+  const tree = [];
+  for (const f of files) {
+    const body = f.text !== undefined ? {content:f.text, encoding:'utf-8'} : {content:f.base64, encoding:'base64'};
+    const blob = await (await gh('/git/blobs', {method:'POST', body:JSON.stringify(body)})).json();
+    tree.push({path:f.path, mode:'100644', type:'blob', sha:blob.sha});
+  }
+  const t = await (await gh('/git/trees', {method:'POST', body:JSON.stringify({base_tree:base, tree})})).json();
+  const c = await (await gh('/git/commits', {method:'POST', body:JSON.stringify({message, tree:t.sha, parents:[head]})})).json();
+  await gh('/git/refs/heads/'+BRANCH, {method:'PATCH', body:JSON.stringify({sha:c.sha})});
+}
+const section = (html, name) => {
+  const a = html.indexOf('<!-- '+name+':START'), b = html.indexOf('<!-- '+name+':END -->');
+  if (a < 0 || b < 0) throw new Error('Could not find the '+name+' section in index.html');
+  const start = html.indexOf('-->', a) + 3;
+  return {start, end:b, inner:html.slice(start, b)};
+};
+const fileToBase64 = file => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
+const canvasBase64 = (canvas, type, q) => canvas.toDataURL(type, q).split(',')[1];
+
+// ---------- login / setup ----------
+const PUBLIC_DEFAULT = {owner:'JaguarsRevenge', repo:'ConfluenceIndivisible'};
+async function loadConfig() {
+  try { const r = await fetch('config.json', {cache:'no-store'}); return r.ok ? await r.json() : null; } catch (e) { return null; }
+}
+function enterApp() {
+  show('login', false); show('setup', false); show('app', true); show('logout', true);
+  loadEvents(); prepNews();
+}
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault(); msg('loginMsg', 'Checking...', 'info');
+  try { TOKEN = await decryptToken(CFG, $('pw').value); }
+  catch (err) { msg('loginMsg', 'That password is not right. Please try again.', 'err'); return; }
+  try { sessionStorage.setItem('ciTok', TOKEN); } catch (err) {}
+  $('pw').value = ''; msg('loginMsg', '', ''); enterApp();
+});
+$('toSetup').onclick = e => { e.preventDefault(); show('login', false); show('setup', true); show('setupBack', !!(CFG && CFG.ct)); };
+$('setupBack').onclick = () => { show('setup', false); show('login', true); };
+$('setupForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if ($('pw1').value !== $('pw2').value) return msg('setupMsg', 'The two passwords do not match.', 'err');
+  msg('setupMsg', 'Saving...', 'info');
+  try {
+    const owner = (CFG && CFG.owner) || PUBLIC_DEFAULT.owner, repo = (CFG && CFG.repo) || PUBLIC_DEFAULT.repo;
+    CFG = {owner, repo}; TOKEN = $('tok').value.trim();
+    const info = await (await gh('')).json();
+    if (!info.permissions || !info.permissions.push) throw new Error('That token cannot save changes to the website. It needs Contents: read and write.');
+    CFG = {owner, repo, ...(await encryptToken(TOKEN, $('pw1').value))};
+    await commitFiles([{path:'admin/config.json', text:JSON.stringify(CFG, null, 2)+'\n'}], 'Admin: set login password');
+    msg('setupMsg', 'Saved. The page will be ready in about a minute. Then come back and log in with your new password.', 'ok');
+    TOKEN = null; $('tok').value = $('pw1').value = $('pw2').value = '';
+  } catch (err) { TOKEN = null; msg('setupMsg', err.message, 'err'); }
+});
+$('logout').onclick = () => { try { sessionStorage.removeItem('ciTok'); } catch (e) {} location.reload(); };
+$('tabEvents').onclick = () => tab(true); $('tabNews').onclick = () => tab(false);
+function tab(ev) { show('viewEvents', ev); show('viewNews', !ev); $('tabEvents').classList.toggle('on', ev); $('tabNews').classList.toggle('on', !ev); }
+
+// ---------- events ----------
+let events = [], editing = -1, dirty = false;
+function parseEvents(html) {
+  const doc = new DOMParser().parseFromString('<ul>'+section(html, 'EVENTS').inner+'</ul>', 'text/html');
+  return [...doc.querySelectorAll('li.event')].map(li => {
+    const meta = li.querySelector('p.meta'), a = li.querySelector('a');
+    const desc = [...li.querySelectorAll('div > p:not(.meta)')].map(p => p.textContent.trim()).join(' ');
+    return {date:li.dataset.date || '', title:(li.querySelector('h3')||{}).textContent || '', when:meta ? meta.textContent.trim() : '',
+      desc, link:a ? a.getAttribute('href') : '', linkText:a ? a.textContent.trim() : '', hi:li.classList.contains('highlight')};
+  });
+}
+function eventHtml(e) {
+  const [y, m, d] = e.date.split('-').map(Number);
+  return '          <li data-date="'+e.date+'" class="event'+(e.hi?' highlight':'')+'">\n'+
+    '            <div class="date"><span>'+MONTHS[m-1]+'</span>'+d+'</div>\n            <div>\n'+
+    '              <h3>'+esc(e.title)+'</h3>\n'+
+    (e.when ? '              <p class="meta">'+esc(e.when)+'</p>\n' : '')+
+    (e.desc ? '              <p>'+esc(e.desc)+'</p>\n' : '')+
+    (e.link ? '              <a href="'+esc(e.link)+'">'+esc(e.linkText || 'Event details')+'</a>\n' : '')+
+    '            </div>\n          </li>\n';
+}
+async function loadEvents() {
+  try { events = parseEvents(await readText('index.html')); sortEvents(); renderEvents(); }
+  catch (err) { msg('evMsg', 'Could not load events: '+err.message, 'err'); }
+}
+const sortEvents = () => events.sort((a, b) => a.date.localeCompare(b.date));
+function renderEvents() {
+  const t = todayStr();
+  $('evList').innerHTML = events.length ? events.map((e, i) => {
+    const [y, m, d] = e.date.split('-').map(Number);
+    return '<div class="evt'+(e.date < t ? ' past' : '')+'"><div class="badge"><span>'+MONTHS[m-1]+'</span>'+d+'</div>'+
+      '<div class="info"><h3>'+esc(e.title)+(e.hi?'<span class="pill">highlight</span>':'')+'</h3><p>'+esc(e.when)+'</p></div>'+
+      '<div class="btns"><button class="small secondary" data-edit="'+i+'">Edit</button><button class="small danger" data-del="'+i+'">Delete</button></div></div>';
+  }).join('') : '<p class="hint">No events yet.</p>';
+  show('evBar', dirty);
+}
+$('evList').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.edit !== undefined) openForm(+b.dataset.edit);
+  if (b.dataset.del !== undefined && confirm('Delete "'+events[+b.dataset.del].title+'"?')) { events.splice(+b.dataset.del, 1); dirty = true; renderEvents(); }
+});
+function openForm(i) {
+  editing = i; const e = i >= 0 ? events[i] : {date:'', title:'', when:'', desc:'', link:'', linkText:'', hi:false};
+  $('evFormTitle').textContent = i >= 0 ? 'Edit event' : 'Add an event';
+  $('evDate').value = e.date; $('evTitle').value = e.title; $('evWhen').value = e.when; $('evDesc').value = e.desc;
+  $('evLink').value = e.link; $('evLinkText').value = e.linkText; $('evHi').checked = e.hi;
+  show('evFormPanel', true); $('evFormPanel').scrollIntoView({behavior:'smooth'}); $('evTitle').focus();
+}
+$('evAdd').onclick = () => openForm(-1);
+$('evCancel').onclick = () => show('evFormPanel', false);
+$('evForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const ev = {date:$('evDate').value, title:$('evTitle').value.trim(), when:$('evWhen').value.trim(), desc:$('evDesc').value.trim(),
+    link:$('evLink').value.trim(), linkText:$('evLinkText').value.trim(), hi:$('evHi').checked};
+  if (ev.link && !/^https?:\/\/|^mailto:/i.test(ev.link)) ev.link = 'https://' + ev.link;
+  if (editing >= 0) events[editing] = ev; else events.push(ev);
+  sortEvents(); dirty = true; show('evFormPanel', false); renderEvents();
+});
+$('evClean').onclick = () => {
+  const t = todayStr(), n = events.filter(e => e.date < t).length;
+  if (!n) return msg('evMsg', 'There are no past events to remove.', 'info');
+  if (confirm('Remove '+n+' past event'+(n>1?'s':'')+'?')) { events = events.filter(e => e.date >= t); dirty = true; renderEvents(); msg('evMsg', '', ''); }
+};
+$('evPublish').onclick = async () => {
+  $('evPublish').disabled = true; msg('evMsg', 'Publishing...', 'info');
+  try {
+    const html = await readText('index.html'), s = section(html, 'EVENTS');
+    const out = html.slice(0, s.start) + '\n' + events.map(eventHtml).join('') + '          ' + html.slice(s.end);
+    await commitFiles([{path:'index.html', text:out}], 'Admin: update events');
+    dirty = false; renderEvents(); msg('evMsg', 'Published! The website will show the changes in about a minute.', 'ok');
+  } catch (err) { msg('evMsg', 'Could not publish: '+err.message, 'err'); }
+  $('evPublish').disabled = false;
+};
+
+// ---------- VoteNote ----------
+let pending = null;
+async function prepNews() {
+  $('nDate').value = todayStr();
+  try {
+    const html = await readText('index.html');
+    const nums = [...html.matchAll(/votenote-edition-(\d+)\.pdf/g)].map(m => +m[1]);
+    $('nNum').value = (nums.length ? Math.max(...nums) : 0) + 1;
+  } catch (err) { msg('nMsg', 'Could not check existing issues: '+err.message, 'err'); }
+}
+async function renderPdf(buf) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const page = await (await pdfjsLib.getDocument({data:buf}).promise).getPage(1);
+  const draw = async scale => {
+    const vp = page.getViewport({scale}), c = document.createElement('canvas');
+    c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+    await page.render({canvasContext:ctx, viewport:vp}).promise; return c;
+  };
+  const w = page.getViewport({scale:1}).width;
+  const thumb = await draw(45/72);
+  const big = await draw(1200 / w);
+  const og = document.createElement('canvas'); og.width = 1200; og.height = 630;
+  const octx = og.getContext('2d'); octx.fillStyle = '#fff'; octx.fillRect(0, 0, 1200, 630); octx.drawImage(big, 0, 0);
+  return {thumb, og};
+}
+$('nForm').addEventListener('submit', async e => {
+  e.preventDefault(); show('nPrev', false); msg('nMsg', 'Making cover pictures...', 'info');
+  try {
+    const file = $('nFile').files[0], n = +$('nNum').value;
+    const html = await readText('index.html');
+    if (html.includes('votenote-edition-'+n+'.pdf')) throw new Error('Edition '+n+' is already on the website. Change the edition number.');
+    const buf = await file.arrayBuffer();
+    const {thumb, og} = await renderPdf(buf.slice(0));
+    pending = {n, html, pdf:await fileToBase64(file), thumb:canvasBase64(thumb, 'image/png'), og:canvasBase64(og, 'image/jpeg', .88),
+      date:niceDate($('nDate').value), sum:$('nSum').value.trim()};
+    $('nThumb').src = 'data:image/png;base64,'+pending.thumb; $('nOg').src = 'data:image/jpeg;base64,'+pending.og;
+    show('nPrev', true); msg('nMsg', '', '');
+  } catch (err) { msg('nMsg', err.message, 'err'); }
+});
+function shareHtml(p) {
+  const ed = ordinal(p.n)+' Edition', title = 'VoteNote '+ed+' · '+p.date, url = SITE+'/share/votenote-'+p.n+'.html';
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${esc(title)} | Confluence Indivisible</title>
+  <meta name="description" content="${esc(p.sum)}">
+  <link rel="canonical" href="${url}">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Confluence Indivisible">
+  <meta property="og:title" content="${esc(title)}">
+  <meta property="og:description" content="${esc(p.sum)}">
+  <meta property="og:url" content="${url}">
+  <meta property="og:image" content="${SITE}/images/og-votenote-edition-${p.n}.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="VoteNote by Confluence Indivisible, ${esc(p.date)}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta http-equiv="refresh" content="0; url=../newsletters/votenote-edition-${p.n}.pdf">
+</head>
+<body>
+  <p><a href="../newsletters/votenote-edition-${p.n}.pdf">Read ${esc(title)} (PDF)</a></p>
+</body>
+</html>
+`;
+}
+function issueHtml(p) {
+  const pdf = 'newsletters/votenote-edition-'+p.n+'.pdf';
+  return `          <li class="issue">
+            <a href="${pdf}" target="_blank" rel="noopener">
+              <img src="images/votenote-edition-${p.n}.png" alt="VoteNote ${ordinal(p.n)} edition cover" loading="lazy">
+            </a>
+            <div class="issue-body">
+              <span class="tag">Latest</span>
+              <h3>${ordinal(p.n)} Edition · ${esc(p.date)}</h3>
+              <p>${esc(p.sum)}</p>
+              <div class="btn-row">
+                <a class="btn btn-primary btn-sm" href="${pdf}" target="_blank" rel="noopener">Read</a>
+                <a class="btn btn-outline btn-sm" href="${pdf}" download>Download PDF</a>
+                <a class="btn btn-outline btn-sm" href="share/votenote-${p.n}.html" title="Right-click and copy this link to share on Facebook">Share link</a>
+              </div>
+            </div>
+          </li>
+`;
+}
+$('nPublish').onclick = async () => {
+  $('nPublish').disabled = true; msg('nMsg', 'Publishing...', 'info');
+  try {
+    const p = pending;
+    let html = await readText('index.html'); // re-read so we never overwrite someone else's edit
+    const s = section(html, 'ISSUES');
+    const inner = s.inner.replace(/\s*<span class="tag">Latest<\/span>/g, '');
+    html = html.slice(0, s.start) + '\n' + issueHtml(p) + inner.replace(/^\n/, '') + html.slice(s.end);
+    html = html.replace(/(property="og:image" content="[^"]*og-votenote-edition-)\d+(\.jpg")/, '$1'+p.n+'$2');
+    await commitFiles([
+      {path:'newsletters/votenote-edition-'+p.n+'.pdf', base64:p.pdf},
+      {path:'images/votenote-edition-'+p.n+'.png', base64:p.thumb},
+      {path:'images/og-votenote-edition-'+p.n+'.jpg', base64:p.og},
+      {path:'share/votenote-'+p.n+'.html', text:shareHtml(p)},
+      {path:'index.html', text:html}
+    ], 'Admin: add VoteNote edition '+p.n);
+    show('nPrev', false); $('nForm').reset(); pending = null; prepNews(); loadEvents();
+    msg('nMsg', 'Published! It will appear on the website in about a minute. Facebook share link: '+SITE+'/share/votenote-'+p.n+'.html', 'ok');
+  } catch (err) { msg('nMsg', 'Could not publish: '+err.message, 'err'); }
+  $('nPublish').disabled = false;
+};
+
+// ---------- start ----------
+(async () => {
+  CFG = await loadConfig();
+  if (!CFG || !CFG.ct) { CFG = CFG || {}; show('setup', true); return; }
+  let saved = null; try { saved = sessionStorage.getItem('ciTok'); } catch (e) {}
+  if (saved) { TOKEN = saved; enterApp(); } else show('login', true);
+})();
+</script>
+</body>
+</html>
