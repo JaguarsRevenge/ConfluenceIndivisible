@@ -2,10 +2,11 @@
 
 Static site for Confluence Indivisible, a group in the Greater Wenatchee Valley, WA. Plain HTML/CSS: no build step, no framework, no JavaScript.
 
-- **Live:** https://jaguarsrevenge.github.io/ConfluenceIndivisible/
+- **Live:** https://confluenceindivisible.org/ (the old https://jaguarsrevenge.github.io/ConfluenceIndivisible/ address redirects here)
 - **Repo:** https://github.com/JaguarsRevenge/ConfluenceIndivisible
 - **Hosting:** GitHub Pages, deploy from branch `main`, folder `/ (root)`. Pushing to `main` publishes in about a minute. `.nojekyll` is present so files are served as-is.
-- **Custom domain:** not set up yet. When it is, add a `CNAME` file containing the domain (same pattern as the NoTo sites) and set the DNS records.
+- **Custom domain:** `confluenceindivisible.org`, set by the `CNAME` file (same pattern as the NoTo sites). As of Oct 5, 2026, HTTP works but HTTPS fails with a certificate name mismatch while GitHub issues the certificate. Once it's issued, tick **Enforce HTTPS** in the repo's Settings > Pages. If it never issues, check the domain's DNS records.
+- **Pushing:** git over HTTPS uses username `JaguarsRevenge` and a fine-grained personal access token (Contents: read and write on this repo) as the password. The GitHub account signs in with Google, which git can't use. The token is saved by `credential.helper store`. Prompts for a username and token can't be answered from inside Claude Code, so run the first push in a separate terminal tab.
 
 ## Files
 
