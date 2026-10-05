@@ -18,6 +18,9 @@ images/votenote-edition-N.png  newsletter cover thumbnails
 images/2026-general-election-cheatsheet.png  cheatsheet thumbnail
 guides/2026-general-election-cheatsheet.pdf  Voter Cheatsheet (one-page key races guide)
 newsletters/votenote-edition-N.pdf  VoteNote issues (clickable PDFs, links inside work)
+images/2026-general-election-judges-initiatives.jpg  statewide cheatsheet (Supreme Court, initiatives, school bonds); second card in #cheatsheet
+images/og-votenote-edition-N.jpg  1200x630 Facebook preview image for each issue
+share/votenote-N.html          per-issue share page: Open Graph tags for Facebook previews, then redirects to the PDF
 ```
 
 ## Content structure (index.html, top to bottom)
@@ -55,8 +58,9 @@ Fonts (Google Fonts): **Oswald** 700 for display/wordmarks, **League Spartan** f
 2. Make a thumbnail with PyMuPDF, which is installed:
    `python -c "import fitz; fitz.open('newsletters/votenote-edition-N.pdf')[0].get_pixmap(dpi=45).save('images/votenote-edition-N.png')"`
 3. Add a new `.issue` at the top of `#votenote`, move the "Latest" tag onto it, and write a one-line summary.
-4. Pull the issue's new events, actions, and links into the Events, Micro Activism, and Know Your Ballot sections. Extract the text and links with fitz: `page.get_text()` and `page.get_links()`.
-5. Remove events whose dates have passed.
+4. Facebook sharing: Facebook can't preview a PDF, so each issue has a `share/votenote-N.html` page (copy the previous one, change the number, date, summary, and image name). Make the preview image: crop the top of page 1 to 1.91:1 and resize to 1200x630 as `images/og-votenote-edition-N.jpg`. The "Share link" button on each issue points at this page; the URL to paste in Facebook is `https://confluenceindivisible.org/share/votenote-N.html`. After publishing, run it through https://developers.facebook.com/tools/debug/ to refresh Facebook's cache.
+5. Pull the issue's new events, actions, and links into the Events, Micro Activism, and Know Your Ballot sections. Extract the text and links with fitz: `page.get_text()` and `page.get_links()`.
+6. Remove events whose dates have passed.
 
 ## Related sites (source in C:\voting)
 

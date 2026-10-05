@@ -435,6 +435,7 @@ section { padding: 64px 0; }
 
 /* Voter cheatsheet */
 .cheatsheet-card { grid-template-columns: 240px 1fr; gap: 28px; padding: 24px; max-width: 860px; }
+.cheatsheet-card + .cheatsheet-card { margin-top: 24px; }
 .steps { margin: 0 0 14px; padding-left: 1.3em; }
 .steps li { margin-bottom: 4px; }
 
