@@ -76,7 +76,7 @@ Fonts (Google Fonts): **Oswald** 700 for display/wordmarks, **League Spartan** f
 
 | Site | Race | Local source |
 |---|---|---|
-| notobrianburnett.org | WA House LD12 Pos 1 | `C:\voting\Brian Burnett\site-today` |
+| notobrianburnett.org | WA House LD12 Pos 1 | `C:\voting\NoToBrianBurnett` |
 | notomikesteele.org | WA House LD12 Pos 2 (vs Maggie Adams) | `C:\voting\NoToMikeSteele` |
 | notoshonsmith.org | Chelan County Commissioner Dist 2 (vs Clint Strand) | `C:\voting\NoToShonSmith` |
 
