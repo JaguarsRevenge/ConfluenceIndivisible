@@ -19,6 +19,7 @@ images/2026-general-election-cheatsheet.png  cheatsheet thumbnail
 guides/2026-general-election-cheatsheet.pdf  Voter Cheatsheet (one-page key races guide)
 newsletters/votenote-edition-N.pdf  VoteNote issues (clickable PDFs, links inside work)
 images/2026-general-election-judges-initiatives.jpg  statewide cheatsheet (Supreme Court, initiatives, school bonds); second card in #cheatsheet
+cheatsheets/index.html         cheatsheet viewer: both cheatsheets on one page, chosen from a left-hand list
 images/og-votenote-edition-N.jpg  1200x630 Facebook preview image for each issue
 share/votenote-N.html          per-issue share page: Open Graph tags for Facebook previews, then redirects to the PDF
 ```
@@ -27,12 +28,16 @@ share/votenote-N.html          per-issue share page: Open Graph tags for Faceboo
 
 `admin/index.html` is a hidden, unlinked, noindex page (the only JavaScript on the site) for adding/editing events and publishing VoteNote issues. It is not truly server-protected, since GitHub Pages is static: a shared password decrypts (AES-GCM, PBKDF2) a GitHub token stored in `admin/config.json`, and the page commits to `main` through the GitHub API. First-time setup/password change is in the page itself (needs a fine-grained token with Contents: read and write). Use a long passphrase; the encrypted token is public. It edits `index.html` only between the `<!-- EVENTS:START/END -->` and `<!-- ISSUES:START/END -->` markers, so keep those markers. Events carry `data-date="YYYY-MM-DD"`. Untested against the live GitHub API as of creation; test after first deploy.
 
+## Cheatsheet viewer (/cheatsheets/)
+
+`cheatsheets/index.html` shows both cheatsheets in one place. A left-hand list selects which one appears on the right; there is no JavaScript. The selection is the URL fragment (`#chelan-douglas`, `#statewide`) handled with CSS `:target`, so the main page can deep-link to either one, and the first cheatsheet shows when there is no fragment. Browsers without `:has()` simply show both, stacked. To add a cheatsheet: add a link in `.viewer-nav`, a matching `.viewer-pane` with the same id, and one selector line for its link in the `@supports` block of `css/styles.css` (search for "Cheatsheet viewer").
+
 ## Content structure (index.html, top to bottom)
 
 1. Header: logo and nav (Cheatsheet, Events, Take Action, VoteNote, Contact)
 2. Hero: the **group** is the headline. VoteNote is only the newsletter; don't make it the main brand.
 3. Gradient band: one-line call to action
-4. `#cheatsheet`: Voter Cheatsheet (two `.issue.cheatsheet-card` cards: the Chelan & Douglas cheatsheet with the four voting steps and Read/Download buttons, then the statewide judges/initiatives/school bonds image). Kept near the top on purpose.
+4. `#cheatsheet`: Voter Cheatsheet (two `.issue.cheatsheet-card` cards: the Chelan & Douglas cheatsheet with the four voting steps and Read/Download buttons, then the statewide judges/initiatives/school bonds image). Kept near the top on purpose. Each card, and the "See both cheatsheets in one place" button, links to the viewer at `cheatsheets/` (`#chelan-douglas` or `#statewide` opens that one); the Download buttons still go straight to the file.
 5. `#events`: Upcoming Events (`.event` list items with a `.date` badge)
 6. `#act`: Micro Activism FOR THE WIN (`.tile` grid)
 7. `#records`: Know the Record, linking to the NoTo candidate sites
