@@ -39,69 +39,63 @@
   </header>
 
   <main id="main">
-    <section class="cheatsheet alt">
+    <section class="cheatsheet alt cheatsheet-page">
       <div class="container">
-        <div class="newsletter-head">
+        <div class="page-head">
           <p class="wordmark"><span class="r">Voter</span> <span class="b">Cheatsheets</span></p>
           <p class="byline">2026 General Election · Chelan &amp; Douglas Counties and Statewide</p>
-          <p>Both of our guides in one place. Choose one from the list. Every pick is the choice our Elections Team vetted as best for North Central Washington.</p>
         </div>
 
-        <!-- To add a cheatsheet: add a link in .viewer-nav, a matching .viewer-pane with the same id,
-             and one line in the @supports block of css/styles.css that highlights its link. -->
+        <!-- To add a cheatsheet: add an anchor span below, a link in .viewer-nav, and a .viewer-pane;
+             then copy the #statewide rules in the "Cheatsheet viewer" block of css/styles.css. -->
+        <span class="viewer-anchor" id="chelan-douglas"></span>
+        <span class="viewer-anchor" id="statewide"></span>
+
         <div class="viewer">
           <nav class="viewer-nav" aria-label="Choose a cheatsheet">
-            <p class="viewer-label">Choose a cheatsheet</p>
-            <a href="#chelan-douglas">
+            <a class="nav-chelan" href="#chelan-douglas">
               <img src="../images/2026-general-election-cheatsheet.png" alt="">
               <span><strong>Chelan &amp; Douglas</strong><small>Key local races</small></span>
             </a>
-            <a href="#statewide">
+            <a class="nav-statewide" href="#statewide">
               <img src="../images/2026-general-election-judges-initiatives.jpg" alt="">
               <span><strong>Statewide</strong><small>Judges, initiatives &amp; school bonds</small></span>
             </a>
           </nav>
 
           <div class="viewer-panes">
-            <article class="viewer-pane" id="chelan-douglas">
-              <div class="issue cheatsheet-card">
-                <a href="../guides/2026-general-election-cheatsheet.pdf" target="_blank" rel="noopener">
-                  <img src="../images/2026-general-election-cheatsheet.png" alt="2026 General Election cheatsheet for Chelan and Douglas counties">
-                </a>
-                <div class="issue-body">
+            <article class="viewer-pane pane-chelan">
+              <div class="sheet-bar">
+                <div>
                   <span class="tag">Ballots mail ~Oct 16</span>
                   <h2>Chelan &amp; Douglas counties</h2>
-                  <h3>Four steps to vote with confidence</h3>
-                  <ol class="steps">
-                    <li><a href="https://voter.votewa.gov/">Verify your registration</a> before ballots mail.</li>
-                    <li>Vote early, as soon as your ballot arrives.</li>
-                    <li>Use a <a href="https://www.co.chelan.wa.us/elections/pages/ballot-drop-box-locations">drop box</a>, not the mail.</li>
-                    <li><a href="https://voter.votewa.gov/portal2023/login.aspx">Track your ballot</a> to confirm it was counted.</li>
-                  </ol>
-                  <p>Our one-page guide to the key races on your ballot. It covers Congress (Districts 4 and 8), Legislative District 12, and county races for commissioner, assessor, auditor, clerk, sheriff, treasurer, and PUD. It's a clickable PDF, so the links inside work.</p>
-                  <div class="btn-row">
-                    <a class="btn btn-primary btn-sm" href="../guides/2026-general-election-cheatsheet.pdf" target="_blank" rel="noopener">Read the cheatsheet</a>
-                    <a class="btn btn-outline btn-sm" href="../guides/2026-general-election-cheatsheet.pdf" download>Download PDF</a>
-                  </div>
+                </div>
+                <div class="btn-row">
+                  <a class="btn btn-primary btn-sm" href="../guides/2026-general-election-cheatsheet.pdf" target="_blank" rel="noopener">Open clickable PDF</a>
+                  <a class="btn btn-outline btn-sm" href="../guides/2026-general-election-cheatsheet.pdf" download>Download</a>
                 </div>
               </div>
+              <a class="sheet" href="../guides/2026-general-election-cheatsheet.pdf" target="_blank" rel="noopener">
+                <img src="../images/2026-general-election-cheatsheet-large.jpg" width="1530" height="1980" alt="2026 General Election cheatsheet for Chelan and Douglas counties: the key races on your ballot and the candidates our Elections Team vetted">
+              </a>
+              <p class="sheet-hint">Click the sheet to open the PDF, where the links work.</p>
             </article>
 
-            <article class="viewer-pane" id="statewide">
-              <div class="issue cheatsheet-card">
-                <a href="../images/2026-general-election-judges-initiatives.jpg" target="_blank" rel="noopener">
-                  <img src="../images/2026-general-election-judges-initiatives.jpg" alt="Statewide on your ballot: Washington Supreme Court candidates, three initiatives, and school bonds" loading="lazy">
-                </a>
-                <div class="issue-body">
+            <article class="viewer-pane pane-statewide">
+              <div class="sheet-bar">
+                <div>
                   <span class="tag">Statewide</span>
                   <h2>Judges, initiatives &amp; school bonds</h2>
-                  <p>Five of nine Supreme Court seats are on the ballot, the largest turnover in decades. See who we're backing for Positions 1, 3, 4, 5 and 7, plus our recommendations on the three statewide initiatives and the Eastmont and Wenatchee school bonds.</p>
-                  <div class="btn-row">
-                    <a class="btn btn-primary btn-sm" href="../images/2026-general-election-judges-initiatives.jpg" target="_blank" rel="noopener">View full size</a>
-                    <a class="btn btn-outline btn-sm" href="../images/2026-general-election-judges-initiatives.jpg" download>Download image</a>
-                  </div>
+                </div>
+                <div class="btn-row">
+                  <a class="btn btn-primary btn-sm" href="../images/2026-general-election-judges-initiatives.jpg" target="_blank" rel="noopener">Open full size</a>
+                  <a class="btn btn-outline btn-sm" href="../images/2026-general-election-judges-initiatives.jpg" download>Download</a>
                 </div>
               </div>
+              <a class="sheet" href="../images/2026-general-election-judges-initiatives.jpg" target="_blank" rel="noopener">
+                <img src="../images/2026-general-election-judges-initiatives.jpg" width="1080" height="1397" loading="lazy" alt="Statewide on your ballot: Washington Supreme Court candidates, three initiatives, and school bonds">
+              </a>
+              <p class="sheet-hint">Five of nine Supreme Court seats are on the ballot, plus three statewide initiatives and the Eastmont and Wenatchee school bonds.</p>
             </article>
           </div>
         </div>

@@ -20,6 +20,7 @@ guides/2026-general-election-cheatsheet.pdf  Voter Cheatsheet (one-page key race
 newsletters/votenote-edition-N.pdf  VoteNote issues (clickable PDFs, links inside work)
 images/2026-general-election-judges-initiatives.jpg  statewide cheatsheet (Supreme Court, initiatives, school bonds); second card in #cheatsheet
 cheatsheets/index.html         cheatsheet viewer: both cheatsheets on one page, chosen from a left-hand list
+images/2026-general-election-cheatsheet-large.jpg  1530px render of the cheatsheet PDF, shown in the viewer
 images/og-votenote-edition-N.jpg  1200x630 Facebook preview image for each issue
 share/votenote-N.html          per-issue share page: Open Graph tags for Facebook previews, then redirects to the PDF
 ```
@@ -30,7 +31,7 @@ share/votenote-N.html          per-issue share page: Open Graph tags for Faceboo
 
 ## Cheatsheet viewer (/cheatsheets/)
 
-`cheatsheets/index.html` shows both cheatsheets in one place. A left-hand list selects which one appears on the right; there is no JavaScript. The selection is the URL fragment (`#chelan-douglas`, `#statewide`) handled with CSS `:target`, so the main page can deep-link to either one, and the first cheatsheet shows when there is no fragment. Browsers without `:has()` simply show both, stacked. To add a cheatsheet: add a link in `.viewer-nav`, a matching `.viewer-pane` with the same id, and one selector line for its link in the `@supports` block of `css/styles.css` (search for "Cheatsheet viewer").
+`cheatsheets/index.html` shows both cheatsheets in one place, large enough to read without clicking: a left-hand list selects which one fills the pane on the right (a two-tab strip on phones). There is no JavaScript. Two `position:fixed` anchor spans (`#chelan-douglas`, `#statewide`) act as the selector through CSS `:target` and sibling selectors; because they are fixed, choosing a sheet never scrolls the page. Chelan & Douglas shows by default and `cheatsheets/index.html#statewide` opens the other, which is how the main-page cards link in. Links to the viewer name `index.html` explicitly so they also work when files are opened from disk (a bare folder link shows a directory listing there). The large image is a render of the PDF; regenerate it when the PDF changes: `python -c "import fitz; fitz.open('guides/2026-general-election-cheatsheet.pdf')[0].get_pixmap(matrix=fitz.Matrix(2.5,2.5)).save('images/2026-general-election-cheatsheet-large.jpg', jpg_quality=84)"`. To add a cheatsheet: add an anchor span, a nav link and a `.viewer-pane`, then copy the `#statewide` rules in the "Cheatsheet viewer" block of `css/styles.css`.
 
 ## Content structure (index.html, top to bottom)
 
