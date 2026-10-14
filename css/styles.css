@@ -390,7 +390,7 @@ section { padding: 64px 0; }
 .record .url { font-weight: 700; color: var(--peach); }
 
 /* VoteNote newsletter */
-.newsletter { background: var(--paper); }
+.newsletter { background: var(--mist); }
 .newsletter-head { max-width: 640px; margin-bottom: 32px; }
 .issues {
   list-style: none;
