@@ -45,9 +45,9 @@ share/votenote-N.html          per-issue share page: Open Graph tags for Faceboo
 8. `#votenote`: VoteNote newsletter archive (`.issue` items, newest first, with a "Latest" `.tag` on the newest)
 9. `#contact`: Get Involved (elections@confluenceindivisible.org)
 
+Section backgrounds alternate white and `--mist` (the `.micro` and `.alt` classes).
 
 The Know Your Ballot section (`#resources`, a `.card` grid) was removed on Oct 14, 2026. The `.cards` / `.card` styles in `css/styles.css` are now unused; keep them if the section returns.
-Section backgrounds alternate white and `--mist` (the `.micro` and `.alt` classes).
 
 ## Brand (taken from the VoteNote newsletter)
 
