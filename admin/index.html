@@ -395,6 +395,7 @@ function mdToHtml(t) {
   t = t.replace(/\\([*\[\]\\])/g, (m, ch) => '\u0000'+(keep.push(ch)-1)+'\u0000');
   t = esc(t)
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, txt, url) => {
+      if (/^[^@\s:\/]+@[^@\s:\/]+\.[a-z]{2,}$/i.test(url)) url = 'mailto:'+url;
       if (!/^(https?:|mailto:|sms:|tel:|#|\/)/i.test(url)) url = 'https://'+url;
       return '<a href="'+url+'">'+txt+'</a>'; })
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
