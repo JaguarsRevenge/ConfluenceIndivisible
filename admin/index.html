@@ -93,6 +93,7 @@
   <div id="app" hidden>
     <div class="tabs">
       <button id="tabEvents" class="on">Events</button>
+      <button id="tabAct">Micro Activism</button>
       <button id="tabNews">Add VoteNote</button>
     </div>
 
@@ -133,6 +134,34 @@
         <button id="evPublish">Publish to website</button>
       </div>
       <div id="evMsg"></div>
+    </div>
+
+    <!-- Micro Activism -->
+    <div id="viewAct" hidden>
+      <div class="panel">
+        <h2>Micro Activism tiles</h2>
+        <p class="hint">These are the "quick win" boxes on the website, in the order shown. Use the arrows to reorder.</p>
+        <div id="tList"></div>
+        <div class="actions"><button id="tAdd">+ Add a tile</button></div>
+      </div>
+
+      <div class="panel" id="tFormPanel" hidden>
+        <h2 id="tFormTitle">Add a tile</h2>
+        <form id="tForm">
+          <label for="tTitle">Heading</label>
+          <input type="text" id="tTitle" placeholder="Track your ballot" required>
+          <label for="tBody">Text</label>
+          <textarea id="tBody" required></textarea>
+          <p class="hint">To make a link, write <b>[words to click](https://web-address)</b>. Email: <b>[name](mailto:someone@example.com)</b>. Bold: <b>**text**</b>. Italic: <b>*text*</b>.</p>
+          <div class="actions"><button type="submit">Done</button><button type="button" class="secondary" id="tCancel">Cancel</button></div>
+        </form>
+      </div>
+
+      <div class="publishbar" id="tBar" hidden>
+        <span>You have changes that are not on the website yet.</span>
+        <button id="tPublish">Publish to website</button>
+      </div>
+      <div id="tMsg"></div>
     </div>
 
     <!-- VoteNote -->
@@ -244,7 +273,7 @@ async function loadConfig() {
 }
 function enterApp() {
   show('login', false); show('setup', false); show('app', true); show('logout', true);
-  loadEvents(); prepNews(); loadIssues();
+  loadEvents(); loadTiles(); prepNews(); loadIssues();
 }
 $('loginForm').addEventListener('submit', async e => {
   e.preventDefault(); msg('loginMsg', 'Checking...', 'info');
@@ -271,8 +300,8 @@ $('setupForm').addEventListener('submit', async e => {
   } catch (err) { TOKEN = null; msg('setupMsg', err.message, 'err'); }
 });
 $('logout').onclick = () => { try { sessionStorage.removeItem('ciTok'); } catch (e) {} location.reload(); };
-$('tabEvents').onclick = () => tab(true); $('tabNews').onclick = () => tab(false);
-function tab(ev) { show('viewEvents', ev); show('viewNews', !ev); $('tabEvents').classList.toggle('on', ev); $('tabNews').classList.toggle('on', !ev); }
+$('tabEvents').onclick = () => tab('Events'); $('tabAct').onclick = () => tab('Act'); $('tabNews').onclick = () => tab('News');
+function tab(name) { for (const n of ['Events', 'Act', 'News']) { show('view'+n, n === name); $('tab'+n).classList.toggle('on', n === name); } }
 
 // ---------- events ----------
 let events = [], editing = -1, dirty = false;
@@ -346,6 +375,86 @@ $('evPublish').onclick = async () => {
     dirty = false; renderEvents(); msg('evMsg', 'Published! The website will show the changes in about a minute.', 'ok');
   } catch (err) { msg('evMsg', 'Could not publish: '+err.message, 'err'); }
   $('evPublish').disabled = false;
+};
+
+// ---------- micro activism tiles ----------
+let tiles = [], tEditing = -1, tDirty = false;
+// tile text is edited as simple markup: [words](url), **bold**, *italic*
+function nodeToMd(n) {
+  return [...n.childNodes].map(c => {
+    if (c.nodeType === 3) return c.textContent.replace(/([*\[\]\\])/g, '\\$1');
+    const inner = nodeToMd(c), tag = c.nodeName.toLowerCase();
+    if (tag === 'a') return '['+inner+']('+c.getAttribute('href')+')';
+    if (tag === 'strong' || tag === 'b') return '**'+inner+'**';
+    if (tag === 'em' || tag === 'i') return '*'+inner+'*';
+    return inner;
+  }).join('');
+}
+function mdToHtml(t) {
+  const keep = [];
+  t = t.replace(/\\([*\[\]\\])/g, (m, ch) => '\u0000'+(keep.push(ch)-1)+'\u0000');
+  t = esc(t)
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, txt, url) => {
+      if (!/^(https?:|mailto:|sms:|tel:|#|\/)/i.test(url)) url = 'https://'+url;
+      return '<a href="'+url+'">'+txt+'</a>'; })
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+  return t.replace(/\u0000(\d+)\u0000/g, (m, i) => esc(keep[+i]));
+}
+function parseTiles(html) {
+  const doc = new DOMParser().parseFromString('<div>'+section(html, 'TILES').inner+'</div>', 'text/html');
+  return [...doc.querySelectorAll('div.tile')].map(d => ({title:(d.querySelector('h3')||{}).textContent || '',
+    body:[...d.querySelectorAll('p')].map(nodeToMd).join('\n\n').trim()}));
+}
+function tileHtml(t) {
+  return '          <div class="tile">\n            <h3>'+esc(t.title)+'</h3>\n'+
+    t.body.split(/\n{2,}/).filter(x => x.trim()).map(x => '            <p>'+mdToHtml(x.trim().replace(/\n/g, ' '))+'</p>\n').join('')+
+    '          </div>\n';
+}
+async function loadTiles() {
+  try { tiles = parseTiles(await readText('index.html')); renderTiles(); }
+  catch (err) { msg('tMsg', 'Could not load tiles: '+err.message, 'err'); }
+}
+function renderTiles() {
+  $('tList').innerHTML = tiles.length ? tiles.map((t, i) =>
+    '<div class="evt"><div class="info"><h3>'+esc(t.title)+'</h3><p>'+esc(t.body.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\*/g, '').slice(0, 110))+'</p></div>'+
+    '<div class="btns"><div style="display:flex;gap:6px"><button class="small secondary" data-up="'+i+'" title="Move up"'+(i?'':' disabled')+'>&uarr;</button>'+
+    '<button class="small secondary" data-down="'+i+'" title="Move down"'+(i<tiles.length-1?'':' disabled')+'>&darr;</button></div>'+
+    '<button class="small secondary" data-tedit="'+i+'">Edit</button><button class="small danger" data-tdel="'+i+'">Delete</button></div></div>'
+  ).join('') : '<p class="hint">No tiles yet.</p>';
+  show('tBar', tDirty);
+}
+$('tList').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const d = b.dataset, move = (i, j) => { [tiles[i], tiles[j]] = [tiles[j], tiles[i]]; tDirty = true; renderTiles(); };
+  if (d.up !== undefined) move(+d.up, +d.up - 1);
+  if (d.down !== undefined) move(+d.down, +d.down + 1);
+  if (d.tedit !== undefined) openTile(+d.tedit);
+  if (d.tdel !== undefined && confirm('Delete the tile "'+tiles[+d.tdel].title+'"?')) { tiles.splice(+d.tdel, 1); tDirty = true; renderTiles(); }
+});
+function openTile(i) {
+  tEditing = i; const t = i >= 0 ? tiles[i] : {title:'', body:''};
+  $('tFormTitle').textContent = i >= 0 ? 'Edit tile' : 'Add a tile';
+  $('tTitle').value = t.title; $('tBody').value = t.body;
+  show('tFormPanel', true); $('tFormPanel').scrollIntoView({behavior:'smooth'}); $('tTitle').focus();
+}
+$('tAdd').onclick = () => openTile(-1);
+$('tCancel').onclick = () => show('tFormPanel', false);
+$('tForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const t = {title:$('tTitle').value.trim(), body:$('tBody').value.trim()};
+  if (tEditing >= 0) tiles[tEditing] = t; else tiles.push(t);
+  tDirty = true; show('tFormPanel', false); renderTiles();
+});
+$('tPublish').onclick = async () => {
+  $('tPublish').disabled = true; msg('tMsg', 'Publishing...', 'info');
+  try {
+    const html = await readText('index.html'), s = section(html, 'TILES');
+    const out = html.slice(0, s.start) + '\n' + tiles.map(tileHtml).join('') + '          ' + html.slice(s.end);
+    await commitFiles([{path:'index.html', text:out}], 'Admin: update Micro Activism tiles');
+    tDirty = false; renderTiles(); msg('tMsg', 'Published! The website will show the changes in about a minute.', 'ok');
+  } catch (err) { msg('tMsg', 'Could not publish: '+err.message, 'err'); }
+  $('tPublish').disabled = false;
 };
 
 // ---------- VoteNote ----------
