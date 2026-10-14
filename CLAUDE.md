@@ -1,6 +1,6 @@
 # Confluence Indivisible website
 
-Static site for Confluence Indivisible, a group in the Greater Wenatchee Valley, WA. Plain HTML/CSS: no build step, no framework, no JavaScript.
+Static site for Confluence Indivisible, a group in the Greater Wenatchee Valley, WA. Plain HTML/CSS: no build step, no framework, and only a tiny script for the "Copy link" buttons (plus the admin page).
 
 - **Live:** https://confluenceindivisible.org/ (the old https://jaguarsrevenge.github.io/ConfluenceIndivisible/ address redirects here)
 - **Repo:** https://github.com/JaguarsRevenge/ConfluenceIndivisible
@@ -42,9 +42,8 @@ share/votenote-N.html          per-issue share page: Open Graph tags for Faceboo
 5. `#events`: Upcoming Events (`.event` list items with a `.date` badge)
 6. `#act`: Micro Activism FOR THE WIN (`.tile` grid)
 7. `#records`: Know the Record, linking to the NoTo candidate sites
-8. `#resources`: Know Your Ballot (`.card` grid)
-9. `#votenote`: VoteNote newsletter archive (`.issue` items, newest first, with a "Latest" `.tag` on the newest)
-10. `#contact`: Get Involved (elections@confluenceindivisible.org)
+8. `#votenote`: VoteNote newsletter archive (`.issue` items, newest first, with a "Latest" `.tag` on the newest)
+9. `#contact`: Get Involved (elections@confluenceindivisible.org)
 
 Section backgrounds alternate white and `--mist` (the `.micro` and `.alt` classes).
 
@@ -68,8 +67,8 @@ Fonts (Google Fonts): **Oswald** 700 for display/wordmarks, **League Spartan** f
 2. Make a thumbnail with PyMuPDF, which is installed:
    `python -c "import fitz; fitz.open('newsletters/votenote-edition-N.pdf')[0].get_pixmap(dpi=45).save('images/votenote-edition-N.png')"`
 3. Add a new `.issue` at the top of `#votenote`, move the "Latest" tag onto it, and write a one-line summary.
-4. Facebook sharing: Facebook can't preview a PDF, so each issue has a `share/votenote-N.html` page (copy the previous one, change the number, date, summary, and image name). Make the preview image: crop the top of page 1 to 1.91:1 and resize to 1200x630 as `images/og-votenote-edition-N.jpg`. The "Share link" button on each issue points at this page; the URL to paste in Facebook is `https://confluenceindivisible.org/share/votenote-N.html`. After publishing, run it through https://developers.facebook.com/tools/debug/ to refresh Facebook's cache.
-5. Pull the issue's new events, actions, and links into the Events, Micro Activism, and Know Your Ballot sections. Extract the text and links with fitz: `page.get_text()` and `page.get_links()`.
+4. Facebook sharing: Facebook can't preview a PDF, so each issue has a `share/votenote-N.html` page (copy the previous one, change the number, date, summary, and image name). Make the preview image: crop the top of page 1 to 1.91:1 and resize to 1200x630 as `images/og-votenote-edition-N.jpg`. The "Copy link" button on each issue copies the URL of this page (the admin page generates it too; the small script is at the end of `index.html`); the URL to paste in Facebook is `https://confluenceindivisible.org/share/votenote-N.html`. After publishing, run it through https://developers.facebook.com/tools/debug/ to refresh Facebook's cache.
+5. Pull the issue's new events, actions, and links into the Events, Micro Activism, and Know the Record sections. Extract the text and links with fitz: `page.get_text()` and `page.get_links()`.
 6. Remove events whose dates have passed.
 
 ## Related sites (source in C:\voting)

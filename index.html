@@ -215,39 +215,6 @@
       </div>
     </section>
 
-    <!-- Voter resources -->
-    <section id="resources" class="alt">
-      <div class="container">
-        <h2 class="section-title">Know Your Ballot</h2>
-        <p class="section-intro">People vote when they feel confident in their choices.</p>
-        <div class="cards">
-          <article class="card">
-            <h3>Voter Cheatsheet</h3>
-            <div class="card-body">
-              <p class="card-lead">The viral cheatsheet has a new look for the general midterm election.</p>
-              <p>A candidate guide to help you and your friends vote with confidence.</p>
-              <a href="#cheatsheet">Read the cheatsheet</a>
-            </div>
-          </article>
-          <article class="card">
-            <h3>Fair property taxes?</h3>
-            <div class="card-body">
-              <p class="card-lead">Wes and Britini face off on what the data says about Chelan County's record.</p>
-              <p>Read Dominick's interviews with <a href="https://dominickb.substack.com/p/chelan-county-assessor-wes-cornelius">Wes</a> and <a href="https://dominickb.substack.com/p/britini-port-wants-the-rich-to-pay">Britini</a>. Candidate forums are being planned.</p>
-            </div>
-          </article>
-          <article class="card">
-            <h3>Worried about your ballot?</h3>
-            <div class="card-body">
-              <p class="card-lead">Sign up for SMS alerts so you can follow your ballot.</p>
-              <p>Text <strong>“VOTE” to 868392</strong>. It's free, and you'll know when your ballot is received, accepted, or challenged.</p>
-              <a href="sms:868392?body=VOTE">Text VOTE now</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
     <!-- VoteNote newsletter -->
     <section class="newsletter" id="votenote">
       <div class="container">
@@ -271,7 +238,7 @@
               <div class="btn-row">
                 <a class="btn btn-primary btn-sm" href="newsletters/votenote-edition-9.pdf" target="_blank" rel="noopener">Read</a>
                 <a class="btn btn-outline btn-sm" href="newsletters/votenote-edition-9.pdf" download>Download PDF</a>
-                <a class="btn btn-outline btn-sm" href="share/votenote-9.html" title="Right-click and copy this link to share on Facebook">Share link</a>
+                <button type="button" class="btn btn-outline btn-sm" data-copy="https://confluenceindivisible.org/share/votenote-9.html">Copy link</button>
               </div>
             </div>
           </li>
@@ -285,7 +252,7 @@
               <div class="btn-row">
                 <a class="btn btn-primary btn-sm" href="newsletters/votenote-edition-8.pdf" target="_blank" rel="noopener">Read</a>
                 <a class="btn btn-outline btn-sm" href="newsletters/votenote-edition-8.pdf" download>Download PDF</a>
-                <a class="btn btn-outline btn-sm" href="share/votenote-8.html" title="Right-click and copy this link to share on Facebook">Share link</a>
+                <button type="button" class="btn btn-outline btn-sm" data-copy="https://confluenceindivisible.org/share/votenote-8.html">Copy link</button>
               </div>
             </div>
           </li>
@@ -299,7 +266,7 @@
               <div class="btn-row">
                 <a class="btn btn-primary btn-sm" href="newsletters/votenote-edition-7.pdf" target="_blank" rel="noopener">Read</a>
                 <a class="btn btn-outline btn-sm" href="newsletters/votenote-edition-7.pdf" download>Download PDF</a>
-                <a class="btn btn-outline btn-sm" href="share/votenote-7.html" title="Right-click and copy this link to share on Facebook">Share link</a>
+                <button type="button" class="btn btn-outline btn-sm" data-copy="https://confluenceindivisible.org/share/votenote-7.html">Copy link</button>
               </div>
             </div>
           </li>
@@ -313,7 +280,7 @@
               <div class="btn-row">
                 <a class="btn btn-primary btn-sm" href="newsletters/votenote-edition-6.pdf" target="_blank" rel="noopener">Read</a>
                 <a class="btn btn-outline btn-sm" href="newsletters/votenote-edition-6.pdf" download>Download PDF</a>
-                <a class="btn btn-outline btn-sm" href="share/votenote-6.html" title="Right-click and copy this link to share on Facebook">Share link</a>
+                <button type="button" class="btn btn-outline btn-sm" data-copy="https://confluenceindivisible.org/share/votenote-6.html">Copy link</button>
               </div>
             </div>
           </li>
@@ -344,5 +311,28 @@
       <a href="#top">Back to top ↑</a>
     </div>
   </footer>
+  <script>
+    // "Copy link" buttons: copy the share URL, then confirm on the button.
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-copy]');
+      if (!b) return;
+      var url = b.getAttribute('data-copy'), label = b.textContent;
+      function done(ok) {
+        b.textContent = ok ? 'Copied!' : 'Press and hold to copy: ' + url;
+        setTimeout(function () { b.textContent = label; }, ok ? 2000 : 6000);
+      }
+      function fallback() {
+        var t = document.createElement('textarea');
+        t.value = url; t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (x) {}
+        document.body.removeChild(t); done(ok);
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(function () { done(true); }, fallback);
+      } else { fallback(); }
+    });
+  </script>
 </body>
 </html>
