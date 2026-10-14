@@ -27,7 +27,7 @@ share/votenote-N.html          per-issue share page: Open Graph tags for Faceboo
 
 ## Admin page (/admin/)
 
-`admin/index.html` is a hidden, unlinked, noindex page (the only JavaScript on the site) for adding/editing events and publishing VoteNote issues. It is not truly server-protected, since GitHub Pages is static: a shared password decrypts (AES-GCM, PBKDF2) a GitHub token stored in `admin/config.json`, and the page commits to `main` through the GitHub API. First-time setup/password change is in the page itself (needs a fine-grained token with Contents: read and write). Use a long passphrase; the encrypted token is public. It edits `index.html` only between the `<!-- EVENTS:START/END -->`, `<!-- TILES:START/END -->` (Micro Activism tiles; text is edited as `[words](url)`, `**bold**`, `*italic*` markup) and `<!-- ISSUES:START/END -->` markers, so keep those markers. Events carry `data-date="YYYY-MM-DD"`. Untested against the live GitHub API as of creation; test after first deploy.
+`admin/index.html` is a hidden, unlinked, noindex page (the only substantial JavaScript on the site; the public page has just the small "Copy link" script) for adding/editing events and publishing VoteNote issues. It is not truly server-protected, since GitHub Pages is static: a shared password decrypts (AES-GCM, PBKDF2) a GitHub token stored in `admin/config.json`, and the page commits to `main` through the GitHub API. First-time setup/password change is in the page itself (needs a fine-grained token with Contents: read and write). Use a long passphrase; the encrypted token is public. It edits `index.html` only between the `<!-- EVENTS:START/END -->`, `<!-- TILES:START/END -->` (Micro Activism tiles; text is edited as `[words](url)`, `**bold**`, `*italic*` markup) and `<!-- ISSUES:START/END -->` markers, so keep those markers. Events carry `data-date="YYYY-MM-DD"`. Untested against the live GitHub API as of creation; test after first deploy.
 
 ## Cheatsheet viewer (/cheatsheets/)
 
@@ -45,6 +45,8 @@ share/votenote-N.html          per-issue share page: Open Graph tags for Faceboo
 8. `#votenote`: VoteNote newsletter archive (`.issue` items, newest first, with a "Latest" `.tag` on the newest)
 9. `#contact`: Get Involved (elections@confluenceindivisible.org)
 
+
+The Know Your Ballot section (`#resources`, a `.card` grid) was removed on Oct 14, 2026. The `.cards` / `.card` styles in `css/styles.css` are now unused; keep them if the section returns.
 Section backgrounds alternate white and `--mist` (the `.micro` and `.alt` classes).
 
 ## Brand (taken from the VoteNote newsletter)
