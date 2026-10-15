@@ -436,7 +436,8 @@ button.btn { background: none; font-family: inherit; line-height: inherit; curso
 button.btn-outline { font-size: 0.95rem; }
 
 /* Voter cheatsheet */
-.cheatsheet-card { grid-template-columns: 240px 1fr; gap: 28px; padding: 24px; max-width: 860px; }
+.cheatsheet-card { grid-template-columns: 420px 1fr; gap: 28px; padding: 24px; max-width: 960px; }
+.previews { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .cheatsheet-card + .cheatsheet-card { margin-top: 24px; }
 .steps { margin: 0 0 14px; padding-left: 1.3em; }
 .steps li { margin-bottom: 4px; }
@@ -492,7 +493,7 @@ button.btn-outline { font-size: 0.95rem; }
   .date { font-size: 1.8rem; }
   .issue { grid-template-columns: 110px 1fr; gap: 14px; }
   .cheatsheet-card { grid-template-columns: 1fr; padding: 18px; }
-  .cheatsheet-card img { max-width: 260px; margin: 0 auto; }
+  .previews { max-width: 400px; margin: 0 auto; }
 }
 
 /* Cheatsheet viewer (cheatsheets/index.html). CSS-only selector, no JavaScript.
